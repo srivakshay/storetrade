@@ -30,10 +30,8 @@ public class TradeServiceImpl implements TradeService {
         );
 
         if (latestTradeOpt.isPresent()) {
-            Trade latestTrade = latestTradeOpt.get();
-            if (trade.getVersion() == null || !trade.getVersion().equals(latestTrade.getVersion())) {
-                throw new RuntimeException("Version conflict! The trade has been updated.");
-            }
+            throw new RuntimeException("Version conflict! The trade already exists.");
+
         } else {
             Optional<Trade> findSimilarTradeOpt = tradeRepository.findTopBySymbolAndTradeTypeAndPriceOrderByVersionDesc(trade.getSymbol(), trade.getTradeType(), trade.getPrice());
             if (findSimilarTradeOpt.isPresent()) {
@@ -42,7 +40,6 @@ public class TradeServiceImpl implements TradeService {
                 throw new RuntimeException("Trade not found!");
             }
         }
-        return null;
     }
 
     @Override
